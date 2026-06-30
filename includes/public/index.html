@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minato Namikaze - API Dashboard Premium</title>
+    <title>Minato Namikaze - Dashboard API Premium</title>
+    <!-- FontAwesome pour les icônes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     
     <style>
-        /* CSS PRINCIPAL & ANIMATIONS (Intégré comme demandé) */
+        /* --- STYLES GLOBAUX ET COULEURS THÈME MINATO --- */
         :root {
-            --primary: #f1c40f; /* L'éclair jaune */
-            --primary-glow: rgba(241, 196, 15, 0.5);
-            --bg-glass: rgba(15, 15, 25, 0.7);
+            --primary: #f1c40f; 
+            --primary-glow: rgba(241, 196, 15, 0.4);
+            --bg-glass: rgba(10, 10, 18, 0.75);
             --border-glass: rgba(241, 196, 15, 0.2);
             --text: #ffffff;
             --text-dim: #b3b3b3;
@@ -33,18 +35,18 @@
             min-height: 100vh;
         }
 
-        /* Overlay pour assombrir légèrement et ajouter du contraste */
+        /* Voile d'ombrage pour le contraste */
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.45);
             z-index: -2;
         }
 
-        /* Conteneur de particules d'énergie (Kunai / Éclairs) */
+        /* Conteneur pour la pluie de particules dorées */
         #particles-container {
             position: fixed;
             top: 0;
@@ -55,7 +57,7 @@
             pointer-events: none;
         }
 
-        /* --- HEADER & PROFIL --- */
+        /* --- NAVIGATION / HEADER --- */
         header {
             display: flex;
             justify-content: space-between;
@@ -63,6 +65,7 @@
             padding: 20px 50px;
             background: var(--bg-glass);
             backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-glass);
             position: sticky;
             top: 0;
@@ -82,7 +85,7 @@
             border-radius: 50%;
             padding: 3px;
             background: linear-gradient(45deg, var(--primary), #e67e22);
-            animation: pulseGlow 3000ms infinite alternate;
+            animation: pulseGlow 2.5s infinite alternate;
         }
 
         .avatar-wrapper img {
@@ -94,7 +97,7 @@
         }
 
         .profile-info h1 {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 800;
             letter-spacing: 1px;
             color: var(--primary);
@@ -106,11 +109,27 @@
             color: var(--text-dim);
         }
 
-        /* Cloche de Notification Premium */
         .header-actions {
             display: flex;
             align-items: center;
             gap: 25px;
+        }
+
+        .admin-trigger {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .admin-trigger:hover {
+            background: var(--primary);
+            color: black;
+            box-shadow: 0 0 15px var(--primary);
         }
 
         .notification-bell {
@@ -137,20 +156,21 @@
             animation: heartBeat 1.5s infinite;
         }
 
-        /* --- DASHBOARD LAYOUT --- */
+        /* --- INTERFACE PRINCIPALE --- */
         .main-container {
             display: flex;
-            padding: 30px 50px;
+            padding: 40px 50px;
             gap: 30px;
             max-width: 1600px;
             margin: 0 auto;
         }
 
-        /* Barre latérale des catégories */
+        /* Barre Latérale */
         .sidebar {
-            width: 300px;
+            width: 320px;
             background: var(--bg-glass);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--border-glass);
             border-radius: 16px;
             padding: 25px;
@@ -177,8 +197,8 @@
             padding: 12px 15px;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.03);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.02);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -188,58 +208,46 @@
         .category-item:hover, .category-item.active {
             background: rgba(241, 196, 15, 0.1);
             border-left-color: var(--primary);
-            transform: translateX(5px);
+            transform: translateX(6px);
         }
 
-        /* Zone d'affichage des API */
+        /* Zone des Fiches */
         .content-area {
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
         }
 
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
+            gap: 25px;
         }
 
-        /* Fiche API Premium */
+        /* Fiche API Style Premium */
         .api-card {
             background: var(--bg-glass);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--border-glass);
             border-radius: 16px;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 15px;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .api-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px var(--primary-glow);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px var(--primary-glow);
             border-color: var(--primary);
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
+            align-items: center;
         }
-
-        .api-badge-method {
-            font-size: 0.75rem;
-            font-weight: bold;
-            padding: 3px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
-
-        .method-get { background: #2ecc71; color: #fff; }
-        .method-post { background: #9b59b6; color: #fff; }
 
         .api-title {
             font-size: 1.2rem;
@@ -247,24 +255,34 @@
             color: var(--primary);
         }
 
+        .api-badge-method {
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 3px 9px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .method-get { background: #2ecc71; color: #fff; }
+        .method-post { background: #9b59b6; color: #fff; }
+
         .api-desc {
             font-size: 0.85rem;
             color: var(--text-dim);
-            margin-bottom: 15px;
-            line-height: 1.4;
+            line-height: 1.5;
         }
 
         .api-endpoint {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 8px 12px;
-            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 10px 14px;
+            border-radius: 8px;
             font-family: monospace;
             font-size: 0.8rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
             overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .btn-copy {
@@ -276,14 +294,14 @@
             transition: transform 0.2s;
         }
 
-        .btn-copy:hover { transform: scale(1.2); }
+        .btn-copy:hover { transform: scale(1.25); }
 
         .btn-test {
             width: 100%;
             background: linear-gradient(90deg, var(--primary), #e67e22);
             color: #000;
             border: none;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
@@ -295,30 +313,29 @@
 
         .btn-test:hover {
             letter-spacing: 2px;
-            box-shadow: 0 0 15px var(--primary);
+            box-shadow: 0 0 20px var(--primary);
         }
 
-        /* --- BOUTON SECRET SOCIAL --- */
+        /* --- COMPOSANTS CACHÉS ET MODALES --- */
         .secret-trigger {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 15px;
-            height: 15px;
+            bottom: 15px;
+            right: 15px;
+            width: 18px;
+            height: 18px;
             background: transparent;
             cursor: pointer;
             z-index: 999;
-            opacity: 0.1;
+            opacity: 0.05;
         }
-
-        .secret-trigger:hover { opacity: 0.5; }
 
         .social-panel {
             position: fixed;
-            bottom: 50px;
-            right: 50px;
+            bottom: 45px;
+            right: 45px;
             background: var(--bg-glass);
             backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border: 2px solid var(--primary);
             border-radius: 16px;
             padding: 25px;
@@ -326,9 +343,9 @@
             flex-direction: column;
             gap: 15px;
             z-index: 1000;
-            box-shadow: 0 0 30px rgba(0,0,0,0.6);
-            animation: slideIn 0.4s ease-out;
-            width: 300px;
+            box-shadow: 0 0 35px rgba(0,0,0,0.7);
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 310px;
         }
 
         .social-links {
@@ -339,12 +356,12 @@
 
         .social-links a {
             color: var(--text);
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
 
         .social-links a:hover {
             color: var(--primary);
-            transform: scale(1.2) translateY(-3px);
+            transform: scale(1.25) translateY(-3px);
         }
 
         .gmail-form input, .gmail-form textarea {
@@ -352,110 +369,68 @@
             background: rgba(0, 0, 0, 0.4);
             border: 1px solid var(--border-glass);
             border-radius: 6px;
-            padding: 8px;
+            padding: 10px;
             color: white;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-size: 0.85rem;
-        }
-
-        /* --- ESPACE ADMIN (Changer Background / Infos) --- */
-        .admin-trigger {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border-glass);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.3s;
-        }
-
-        .admin-trigger:hover {
-            background: var(--primary);
-            color: black;
         }
 
         .admin-modal {
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            background: rgba(10, 10, 20, 0.95);
+            transform: translate(-50%, -50%) scale(0.85);
+            background: rgba(12, 12, 22, 0.96);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 2px solid var(--primary);
             padding: 30px;
             border-radius: 16px;
             z-index: 2000;
             width: 90%;
-            max-width: 450px;
+            max-width: 440px;
             display: none;
             box-shadow: 0 0 40px var(--primary-glow);
         }
 
         .admin-modal.active {
             display: block;
-            animation: modalOpen 0.3s forwards;
+            animation: modalEffect 0.3s forwards;
         }
 
-        .admin-modal h2 {
-            color: var(--primary);
-            margin-bottom: 20px;
-            font-size: 1.4rem;
-        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.85rem; margin-bottom: 6px; color: var(--text-dim); }
+        .form-group input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); padding: 11px; border-radius: 6px; color: white; }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            margin-bottom: 5px;
-            color: var(--text-dim);
-        }
-
-        .form-group input {
-            width: 100%;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border-glass);
-            padding: 10px;
-            border-radius: 6px;
-            color: white;
-        }
-
-        /* --- ANIMATIONS CORE --- */
+        /* --- KEYFRAMES ANIMATIONS --- */
         @keyframes pulseGlow {
             0% { box-shadow: 0 0 10px var(--primary-glow); }
             100% { box-shadow: 0 0 25px var(--primary); }
         }
-
         @keyframes heartBeat {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
+            50% { transform: scale(1.25); }
         }
-
-        @keyframes slideIn {
-            from { transform: translateY(30px); opacity: 0; }
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
-
-        @keyframes modalOpen {
+        @keyframes modalEffect {
             to { transform: translate(-50%, -50%) scale(1); }
         }
 
-        /* Effet Rasengan/Chidori particule */
+        /* Particules style Éclair Jaune */
         .energy-particle {
             position: absolute;
             background: radial-gradient(circle, rgba(241,196,15,0.8) 0%, rgba(241,196,15,0) 70%);
             border-radius: 50%;
             pointer-events: none;
-            animation: fly 4s linear infinite;
+            animation: particleUp 4s linear infinite;
         }
-
-        @keyframes fly {
+        @keyframes particleUp {
             0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            50% { opacity: 0.8; }
-            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+            50% { opacity: 0.7; }
+            100% { transform: translateY(-10vh) scale(1.4); opacity: 0; }
         }
     </style>
 </head>
@@ -464,10 +439,12 @@
     <div class="overlay"></div>
     <div id="particles-container"></div>
 
+    <!-- Lecteur audio masqué pour l'ambiance sonore musicale -->
     <audio id="bg-music" loop>
         <source src="../../assets/music/bg.mp3" type="audio/mpeg">
     </audio>
 
+    <!-- ENTÊTE DE LA PAGE -->
     <header>
         <div class="profile-container">
             <div class="avatar-wrapper">
@@ -481,14 +458,16 @@
 
         <div class="header-actions">
             <button class="admin-trigger" onclick="openAdminModal()"><i class="fa-solid fa-lock"></i> Admin</button>
-            <div class="notification-bell" onclick="alert('Notification 1: Bienvenue sur le Dashboard Minato V2 !\nNotification 2: Toutes les fonctionnalités de test d\'API sont prêtes !')">
+            <div class="notification-bell" onclick="alert('Notification 1: Bienvenue sur le Dashboard Minato V2 !\nNotification 2: Le chargement dynamique automatique et sécurisé est opérationnel.')">
                 <i class="fa-solid fa-bell"></i>
                 <span class="badge">2</span>
             </div>
         </div>
     </header>
 
+    <!-- ZONE DE CONTENU PRINCIPALE -->
     <div class="main-container">
+        <!-- BARRE LATERALE DES CATEGORIES -->
         <aside class="sidebar">
             <h3>Catégories</h3>
             <ul class="category-list" id="category-box">
@@ -498,37 +477,15 @@
             </ul>
         </aside>
 
+        <!-- GRILLE DYNAMIQUE -->
         <main class="content-area">
             <div class="cards-grid" id="api-cards-container">
-                <div class="api-card" data-category="ai">
-                    <div class="card-header">
-                        <span class="api-badge-method method-get">GET</span>
-                        <span class="api-title">GPT API</span>
-                    </div>
-                    <p class="api-desc">Génère des réponses textuelles intelligentes et fluides à l'aide de l'IA.</p>
-                    <div class="api-endpoint">
-                        <span>/gpt?q=&image=</span>
-                        <button class="btn-copy" onclick="copyToClipboard('/gpt?q=&image=')"><i class="fa-solid fa-copy"></i></button>
-                    </div>
-                    <button class="btn-test" onclick="testApi('/gpt?q=hello')">Tester l'API</button>
-                </div>
-
-                <div class="api-card" data-category="download">
-                    <div class="card-header">
-                        <span class="api-badge-method method-get">GET</span>
-                        <span class="api-title">TikTok Downloader</span>
-                    </div>
-                    <p class="api-desc">Télécharge les vidéos TikTok sans aucun filigrane (Watermark) instantanément.</p>
-                    <div class="api-endpoint">
-                        <span>/download/tiktok?url=</span>
-                        <button class="btn-copy" onclick="copyToClipboard('/download/tiktok?url=')"><i class="fa-solid fa-copy"></i></button>
-                    </div>
-                    <button class="btn-test" onclick="testApi('/download/tiktok?url=test')">Tester l'API</button>
-                </div>
+                <!-- Les fiches d'API s'injecteront ici de manière automatique sans altérer la mise en page -->
             </div>
         </main>
     </div>
 
+    <!-- ZONE SECRET SOCIAL PANNEAU -->
     <div class="secret-trigger" onclick="toggleSocialPanel()"></div>
     <div class="social-panel" id="social-panel">
         <h3>Réseaux de l'Auteur</h3>
@@ -538,121 +495,178 @@
             <a href="https://youtube.com" target="_blank"><i class="fa-brands fa-youtube"></i></a>
             <a href="https://wa.me/" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
         </div>
-        <hr style="border-color: var(--border-glass); margin: 10px 0;">
+        <hr style="border-color: var(--border-glass); margin: 12px 0;">
         <div class="gmail-form">
-            <input type="email" placeholder="Votre Gmail" id="user-email">
-            <textarea placeholder="Votre message..." rows="3" id="user-msg"></textarea>
-            <button class="btn-test" onclick="alert('Message envoyé à l\'auteur !')">Envoyer</button>
+            <input type="email" placeholder="Votre Adresse Email (Gmail)" id="user-email">
+            <textarea placeholder="Votre message pour l'auteur..." rows="3" id="user-msg"></textarea>
+            <button class="btn-test" onclick="alert('Message transmis avec succès à Chris st !')">Envoyer</button>
         </div>
     </div>
 
+    <!-- ESPACE DE CONFIGURATION ADMIN PROTECTION PAR MOT DE PASSE -->
     <div class="admin-modal" id="admin-modal">
-        <h2>Espace Édition Privé</h2>
+        <h2>Espace Administration</h2>
         <div class="form-group">
-            <label>Mot de passe Requis</label>
-            <input type="password" id="admin-pass" placeholder="Entrez le code secret...">
+            <label>Clé d'accès Secrète</label>
+            <input type="password" id="admin-pass" placeholder="Entrez le mot de passe admin...">
         </div>
         <div class="form-group">
-            <label>Nouvelle URL de l'image de Fond</label>
-            <input type="text" id="new-bg-url" placeholder="https://url-de-l-image.jpg">
+            <label>Lien URL de l'image de Fond</label>
+            <input type="text" id="new-bg-url" placeholder="Ex: https://image.png">
         </div>
         <div class="form-group">
-            <label>Nom de l'Auteur</label>
-            <input type="text" id="new-author-name" placeholder="Chris st">
+            <label>Nouveau Nom d'Auteur</label>
+            <input type="text" id="new-author-name" placeholder="Ex: Chris st">
         </div>
-        <div style="display:flex; gap:10px;">
-            <button class="btn-test" onclick="saveAdminChanges()">Valider</button>
-            <button class="btn-test" style="background: #c0392b; color: white;" onclick="closeAdminModal()">Fermer</button>
+        <div style="display:flex; gap:12px; margin-top:20px;">
+            <button class="btn-test" onclick="saveAdminChanges()">Sauvegarder</button>
+            <button class="btn-test" style="background: #c0392b; color: white;" onclick="closeAdminModal()">Annuler</button>
         </div>
     </div>
 
+    <!-- LOGIQUE LOGICIELLE DE SYNCHRONISATION SANS FAILLE -->
     <script>
-        // Lancement de la musique de fond au premier clic
+        let allApis = [];
+
+        // Gestion de la musique de fond
         window.addEventListener('click', () => {
             const music = document.getElementById('bg-music');
-            if(music.paused) {
-                music.play().catch(e => console.log("Musique bloquée par le navigateur"));
+            if(music && music.paused) {
+                music.play().catch(() => {});
             }
         });
 
-        // Générateur de particules d'éclairs dorés (Style Minato)
+        // Générateur d'ambiance visuelle animée
         function createParticles() {
             const container = document.getElementById('particles-container');
-            for (let i = 0; i < 40; i++) {
-                let particle = document.createElement('div');
-                particle.classList.add('energy-particle');
-                let size = Math.random() * 8 + 4;
-                particle.style.width = size + 'px';
-                particle.style.height = size + 'px';
-                particle.style.left = Math.random() * 100 + 'vw';
-                particle.style.animationDelay = Math.random() * 5 + 's';
-                particle.style.animationDuration = Math.random() * 4 + 3 + 's';
-                container.appendChild(particle);
+            if(!container) return;
+            for (let i = 0; i < 35; i++) {
+                let p = document.createElement('div');
+                p.classList.add('energy-particle');
+                let size = Math.random() * 7 + 4;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.animationDelay = Math.random() * 5 + 's';
+                p.style.animationDuration = Math.random() * 4 + 3 + 's';
+                container.appendChild(p);
             }
         }
         createParticles();
 
-        // Filtrage dynamique des Catégories
+        // Récupération des données APIs en provenance de la configuration backend Node
+        async function loadDashboardApis() {
+            try {
+                const res = await fetch('/api/list');
+                const data = await res.json();
+                allApis = data.apis || [];
+                displayCards(allApis);
+            } catch (err) {
+                console.log("Mode local détecté ou serveur déconnecté.");
+                displayCards([]);
+            }
+        }
+
+        // Affichage et rendu visuel propre des fiches d'API
+        function displayCards(apis) {
+            const container = document.getElementById('api-cards-container');
+            if(!container) return;
+            container.innerHTML = '';
+
+            if(apis.length === 0) {
+                container.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color: var(--text-dim);">Aucune API chargée. Les modules du dossier /api/ apparaîtront ici automatiquement dès l'initialisation du serveur.</p>`;
+                return;
+            }
+
+            apis.forEach(api => {
+                const card = document.createElement('div');
+                card.classList.add('api-card');
+                card.setAttribute('data-category', api.category);
+
+                const linkTarget = api.link && api.link.length > 0 ? api.link[0] : `/${api.name}`;
+
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span class="api-badge-method method-${api.method.toLowerCase()}">${api.method}</span>
+                        <span class="api-title">${api.name.toUpperCase()} <span style="font-size:0.7rem; color:var(--text-dim);">v${api.version || '1.0'}</span></span>
+                    </div>
+                    <p class="api-desc">${api.description || 'Module de test d\'API opérationnel.'}</p>
+                    <div style="font-size: 0.8rem; color: var(--primary); font-weight:600;">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Guide: ${api.guide || 'Entrez les paramètres requis.'}
+                    </div>
+                    <div class="api-endpoint">
+                        <span>${linkTarget}</span>
+                        <button class="btn-copy" onclick="copyToClipboard('${linkTarget}')"><i class="fa-solid fa-copy"></i></button>
+                    </div>
+                    <button class="btn-test" onclick="runApiExecution('${linkTarget}')">Tester l'API</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
         function filterCategory(category) {
             const cards = document.querySelectorAll('.api-card');
             cards.forEach(card => {
                 if(category === 'all' || card.getAttribute('data-category') === category) {
-                    card.style.display = 'block';
+                    card.style.display = 'flex';
                 } else {
                     card.style.display = 'none';
                 }
             });
-            
-            // Toggle classe active
-            document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            document.querySelectorAll('.category-item').forEach(el => el.classList.remove('active'));
+            if(event && event.currentTarget) event.currentTarget.classList.add('active');
         }
 
-        // Copier dans le presse-papier
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text);
-            alert("Lien de l'API copié ! : " + text);
+            alert("Endpoint copié dans le presse-papier : " + text);
         }
 
-        // Simuler ou tester l'appel de l'API
-        function testApi(endpoint) {
-            alert("Lancement du test sur l'endpoint : " + endpoint + "\nStatut: En attente du serveur...");
-        }
-
-        // Panneau Secret
-        function toggleSocialPanel() {
-            const panel = document.getElementById('social-panel');
-            panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
-        }
-
-        // Modale Administration
-        function openAdminModal() {
-            document.getElementById('admin-modal').classList.add('active');
-        }
-        function closeAdminModal() {
-            document.getElementById('admin-modal').classList.remove('active');
-        }
-
-        // Sauvegarde des modifications Administrateur via Mot de Passe secret
-        function saveAdminChanges() {
-            const pass = document.getElementById('admin-pass').value;
-            if(pass === "2$modombo") {
-                const newBg = document.getElementById('new-bg-url').value;
-                const newName = document.getElementById('new-author-name').value;
-
-                if(newBg) {
-                    document.body.style.background = `url('${newBg}') no-repeat center center fixed`;
-                    document.body.style.backgroundSize = 'cover';
-                }
-                if(newName) {
-                    document.getElementById('author-name').innerText = newName;
-                }
-                alert("Modifications appliquées avec succès, Maître Minato !");
-                closeAdminModal();
-            } else {
-                alert("Mot de passe incorrect ! Accès refusé.");
+        async function runApiExecution(endpoint) {
+            let userParam = "";
+            if (endpoint.includes('q=')) {
+                userParam = prompt("Entrez la valeur du paramètre 'q' pour le test :", "Hello !");
+                if (userParam === null) return;
+                endpoint = endpoint.replace('q=', `q=${encodeURIComponent(userParam)}`);
+            }
+            alert(`Lancement de la requête vers : ${endpoint}`);
+            try {
+                const res = await fetch(endpoint);
+                const json = await res.json();
+                alert(`[RÉPONSE API]\n\n${JSON.stringify(json, null, 2)}`);
+            } catch (e) {
+                alert("Échec du test. Assurez-vous que l'API est correctement configurée et active sur le serveur.");
             }
         }
+
+        function toggleSocialPanel() {
+            const panel = document.getElementById('social-panel');
+            if(panel) panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function openAdminModal() { document.getElementById('admin-modal').classList.add('active'); }
+        function closeAdminModal() { document.getElementById('admin-modal').classList.remove('active'); }
+
+        function saveAdminChanges() {
+            const secret = document.getElementById('admin-pass').value;
+            if(secret === "2$modombo") {
+                const bg = document.getElementById('new-bg-url').value;
+                const author = document.getElementById('new-author-name').value;
+                if(bg) {
+                    document.body.style.background = `url('${bg}') no-repeat center center fixed`;
+                    document.body.style.backgroundSize = 'cover';
+                }
+                if(author) {
+                    document.getElementById('author-name').innerText = author;
+                }
+                alert("Configurations validées et appliquées avec succès !");
+                closeAdminModal();
+            } else {
+                alert("Clé secrète invalide. Accès refusé.");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", loadDashboardApis);
     </script>
 </body>
 </html>
