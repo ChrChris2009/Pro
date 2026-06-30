@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minato Namikaze - API Dashboard Premium</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS PRINCIPAL & ANIMATIONS (Intégré comme demandé) */
+        :root {
+            --primary: #f1c40f; /* L'éclair jaune */
+            --primary-glow: rgba(241, 196, 15, 0.5);
+            --bg-glass: rgba(15, 15, 25, 0.7);
+            --border-glass: rgba(241, 196, 15, 0.2);
+            --text: #ffffff;
+            --text-dim: #b3b3b3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: url('https://i.imgur.com/3XGeH9D.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Overlay pour assombrir légèrement et ajouter du contraste */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: -2;
+        }
+
+        /* Conteneur de particules d'énergie (Kunai / Éclairs) */
+        #particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- HEADER & PROFIL --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-glass);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            padding: 3px;
+            background: linear-gradient(45deg, var(--primary), #e67e22);
+            animation: pulseGlow 3000ms infinite alternate;
+        }
+
+        .avatar-wrapper img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #000;
+        }
+
+        .profile-info h1 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .profile-info p {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        /* Cloche de Notification Premium */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .notification-bell:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 50%;
+            animation: heartBeat 1.5s infinite;
+        }
+
+        /* --- DASHBOARD LAYOUT --- */
+        .main-container {
+            display: flex;
+            padding: 30px 50px;
+            gap: 30px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Barre latérale des catégories */
+        .sidebar {
+            width: 300px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 25px;
+            height: fit-content;
+        }
+
+        .sidebar h3 {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .category-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .category-item {
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.03);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid transparent;
+        }
+
+        .category-item:hover, .category-item.active {
+            background: rgba(241, 196, 15, 0.1);
+            border-left-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        /* Zone d'affichage des API */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        /* Fiche API Premium */
+        .api-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .api-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px var(--primary-glow);
+            border-color: var(--primary);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .api-badge-method {
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .method-get { background: #2ecc71; color: #fff; }
+        .method-post { background: #9b59b6; color: #fff; }
+
+        .api-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .api-desc {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .api-endpoint {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            overflow-x: auto;
+        }
+
+        .btn-copy {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            padding-left: 10px;
+            transition: transform 0.2s;
+        }
+
+        .btn-copy:hover { transform: scale(1.2); }
+
+        .btn-test {
+            width: 100%;
+            background: linear-gradient(90deg, var(--primary), #e67e22);
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .btn-test:hover {
+            letter-spacing: 2px;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        /* --- BOUTON SECRET SOCIAL --- */
+        .secret-trigger {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 15px;
+            height: 15px;
+            background: transparent;
+            cursor: pointer;
+            z-index: 999;
+            opacity: 0.1;
+        }
+
+        .secret-trigger:hover { opacity: 0.5; }
+
+        .social-panel {
+            position: fixed;
+            bottom: 50px;
+            right: 50px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(15px);
+            border: 2px solid var(--primary);
+            border-radius: 16px;
+            padding: 25px;
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+            box-shadow: 0 0 30px rgba(0,0,0,0.6);
+            animation: slideIn 0.4s ease-out;
+            width: 300px;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: space-around;
+            font-size: 1.8rem;
+        }
+
+        .social-links a {
+            color: var(--text);
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--primary);
+            transform: scale(1.2) translateY(-3px);
+        }
+
+        .gmail-form input, .gmail-form textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-glass);
+            border-radius: 6px;
+            padding: 8px;
+            color: white;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        /* --- ESPACE ADMIN (Changer Background / Infos) --- */
+        .admin-trigger {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-glass);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .admin-trigger:hover {
+            background: var(--primary);
+            color: black;
+        }
+
+        .admin-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: rgba(10, 10, 20, 0.95);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--primary);
+            padding: 30px;
+            border-radius: 16px;
+            z-index: 2000;
+            width: 90%;
+            max-width: 450px;
+            display: none;
+            box-shadow: 0 0 40px var(--primary-glow);
+        }
+
+        .admin-modal.active {
+            display: block;
+            animation: modalOpen 0.3s forwards;
+        }
+
+        .admin-modal h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            color: var(--text-dim);
+        }
+
+        .form-group input {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-glass);
+            padding: 10px;
+            border-radius: 6px;
+            color: white;
+        }
+
+        /* --- ANIMATIONS CORE --- */
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px var(--primary-glow); }
+            100% { box-shadow: 0 0 25px var(--primary); }
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes modalOpen {
+            to { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* Effet Rasengan/Chidori particule */
+        .energy-particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(241,196,15,0.8) 0%, rgba(241,196,15,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: fly 4s linear infinite;
+        }
+
+        @keyframes fly {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="overlay"></div>
+    <div id="particles-container"></div>
+
+    <audio id="bg-music" loop>
+        <source src="../../assets/music/bg.mp3" type="audio/mpeg">
+    </audio>
+
+    <header>
+        <div class="profile-container">
+            <div class="avatar-wrapper">
+                <img id="author-avatar" src="https://i.imgur.com/3XGeH9D.jpeg" alt="Chris st">
+            </div>
+            <div class="profile-info">
+                <h1 id="site-title">Minato Namikaze</h1>
+                <p>Créateur : <span id="author-name">Chris st</span></p>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <button class="admin-trigger" onclick="openAdminModal()"><i class="fa-solid fa-lock"></i> Admin</button>
+            <div class="notification-bell" onclick="alert('Notification 1: Bienvenue sur le Dashboard Minato V2 !\nNotification 2: Toutes les fonctionnalités de test d\'API sont prêtes !')">
+                <i class="fa-solid fa-bell"></i>
+                <span class="badge">2</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <h3>Catégories</h3>
+            <ul class="category-list" id="category-box">
+                <li class="category-item active" onclick="filterCategory('all')"><span>Toutes</span> <i class="fa-solid fa-layer-group"></i></li>
+                <li class="category-item" onclick="filterCategory('ai')"><span>Intelligence Artificielle</span> <i class="fa-solid fa-robot"></i></li>
+                <li class="category-item" onclick="filterCategory('download')"><span>Téléchargement</span> <i class="fa-solid fa-download"></i></li>
+            </ul>
+        </aside>
+
+        <main class="content-area">
+            <div class="cards-grid" id="api-cards-container">
+                <div class="api-card" data-category="ai">
+                    <div class="card-header">
+                        <span class="api-badge-method method-get">GET</span>
+                        <span class="api-title">GPT API</span>
+                    </div>
+                    <p class="api-desc">Génère des réponses textuelles intelligentes et fluides à l'aide de l'IA.</p>
+                    <div class="api-endpoint">
+                        <span>/gpt?q=&image=</span>
+                        <button class="btn-copy" onclick="copyToClipboard('/gpt?q=&image=')"><i class="fa-solid fa-copy"></i></button>
+                    </div>
+                    <button class="btn-test" onclick="testApi('/gpt?q=hello')">Tester l'API</button>
+                </div>
+
+                <div class="api-card" data-category="download">
+                    <div class="card-header">
+                        <span class="api-badge-method method-get">GET</span>
+                        <span class="api-title">TikTok Downloader</span>
+                    </div>
+                    <p class="api-desc">Télécharge les vidéos TikTok sans aucun filigrane (Watermark) instantanément.</p>
+                    <div class="api-endpoint">
+                        <span>/download/tiktok?url=</span>
+                        <button class="btn-copy" onclick="copyToClipboard('/download/tiktok?url=')"><i class="fa-solid fa-copy"></i></button>
+                    </div>
+                    <button class="btn-test" onclick="testApi('/download/tiktok?url=test')">Tester l'API</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="secret-trigger" onclick="toggleSocialPanel()"></div>
+    <div class="social-panel" id="social-panel">
+        <h3>Réseaux de l'Auteur</h3>
+        <div class="social-links">
+            <a href="https://github.com" target="_blank"><i class="fa-brands fa-github"></i></a>
+            <a href="https://facebook.com" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+            <a href="https://youtube.com" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://wa.me/" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+        <hr style="border-color: var(--border-glass); margin: 10px 0;">
+        <div class="gmail-form">
+            <input type="email" placeholder="Votre Gmail" id="user-email">
+            <textarea placeholder="Votre message..." rows="3" id="user-msg"></textarea>
+            <button class="btn-test" onclick="alert('Message envoyé à l\'auteur !')">Envoyer</button>
+        </div>
+    </div>
+
+    <div class="admin-modal" id="admin-modal">
+        <h2>Espace Édition Privé</h2>
+        <div class="form-group">
+            <label>Mot de passe Requis</label>
+            <input type="password" id="admin-pass" placeholder="Entrez le code secret...">
+        </div>
+        <div class="form-group">
+            <label>Nouvelle URL de l'image de Fond</label>
+            <input type="text" id="new-bg-url" placeholder="https://url-de-l-image.jpg">
+        </div>
+        <div class="form-group">
+            <label>Nom de l'Auteur</label>
+            <input type="text" id="new-author-name" placeholder="Chris st">
+        </div>
+        <div style="display:flex; gap:10px;">
+            <button class="btn-test" onclick="saveAdminChanges()">Valider</button>
+            <button class="btn-test" style="background: #c0392b; color: white;" onclick="closeAdminModal()">Fermer</button>
+        </div>
+    </div>
+
+    <script>
+        // Lancement de la musique de fond au premier clic
+        window.addEventListener('click', () => {
+            const music = document.getElementById('bg-music');
+            if(music.paused) {
+                music.play().catch(e => console.log("Musique bloquée par le navigateur"));
+            }
+        });
+
+        // Générateur de particules d'éclairs dorés (Style Minato)
+        function createParticles() {
+            const container = document.getElementById('particles-container');
+            for (let i = 0; i < 40; i++) {
+                let particle = document.createElement('div');
+                particle.classList.add('energy-particle');
+                let size = Math.random() * 8 + 4;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.animationDuration = Math.random() * 4 + 3 + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // Filtrage dynamique des Catégories
+        function filterCategory(category) {
+            const cards = document.querySelectorAll('.api-card');
+            cards.forEach(card => {
+                if(category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Toggle classe active
+            document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        // Copier dans le presse-papier
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            alert("Lien de l'API copié ! : " + text);
+        }
+
+        // Simuler ou tester l'appel de l'API
+        function testApi(endpoint) {
+            alert("Lancement du test sur l'endpoint : " + endpoint + "\nStatut: En attente du serveur...");
+        }
+
+        // Panneau Secret
+        function toggleSocialPanel() {
+            const panel = document.getElementById('social-panel');
+            panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        // Modale Administration
+        function openAdminModal() {
+            document.getElementById('admin-modal').classList.add('active');
+        }
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.remove('active');
+        }
+
+        // Sauvegarde des modifications Administrateur via Mot de Passe secret
+        function saveAdminChanges() {
+            const pass = document.getElementById('admin-pass').value;
+            if(pass === "2$modombo") {
+                const newBg = document.getElementById('new-bg-url').value;
+                const newName = document.getElementById('new-author-name').value;
+
+                if(newBg) {
+                    document.body.style.background = `url('${newBg}') no-repeat center center fixed`;
+                    document.body.style.backgroundSize = 'cover';
+                }
+                if(newName) {
+                    document.getElementById('author-name').innerText = newName;
+                }
+                alert("Modifications appliquées avec succès, Maître Minato !");
+                closeAdminModal();
+            } else {
+                alert("Mot de passe incorrect ! Accès refusé.");
+            }
+        }
+    </script>
+</body>
+</html>
